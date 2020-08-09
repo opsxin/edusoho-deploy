@@ -1,0 +1,10 @@
+[all]
+web1 ansible_host=172.17.0.2
+db1 ansible_host=172.17.0.3
+
+[web]
+web1
+
+[db]
+web1
+db1

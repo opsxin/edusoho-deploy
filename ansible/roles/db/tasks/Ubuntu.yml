@@ -1,0 +1,36 @@
+- name: Ubuntu 18,20 | Install gpg
+  apt:
+    name: gpg
+    state: present
+  when: ansible_distribution_major_version | int > 16
+
+- block:
+    - name: Ubuntu 16,18 | install mysql key
+      apt_key:
+        keyserver: keyserver.ubuntu.com
+        id: 8C718D3B5072E1F5
+        state: present
+
+    - name: Ubuntu 16,18 | install mysql repository
+      apt_repository:
+        repo: "deb http://mirrors.tuna.tsinghua.edu.cn/mysql/apt/ubuntu/ {{ ansible_distribution_release }} mysql-5.7"
+        filename: mysql
+        update_cache: no
+
+    - name: Ubuntu 16,18 | install mysql 5.7
+      apt:
+        name:
+          - mysql-server
+          - mysql-client
+        state: present
+        update_cache: yes
+  when: ansible_distribution_version | float < 20.04
+
+- name: Ubuntu 20 | install mysql 8
+  apt:
+    name:
+      - mysql-server-8.0
+      - mysql-client-8.0
+    state: present
+    update_cache: yes
+  when: ansible_distribution_version | float == 20.04

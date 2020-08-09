@@ -1,0 +1,13 @@
+- hosts: web
+  gather_facts: yes
+  vars_files:
+    - defaults.yml
+  roles:
+    - { role: nginx }
+    - { role: php }
+    - { role: edusoho}
+
+- hosts: db
+  gather_facts: yes
+  roles:
+    - { role: db }

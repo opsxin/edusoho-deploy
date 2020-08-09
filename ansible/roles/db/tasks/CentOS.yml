@@ -1,0 +1,28 @@
+- block:
+    - name: CentOS 7 | install mysql source
+      yum:
+        name: https://mirrors.ustc.edu.cn/mysql-repo/mysql57-community-release-el7-9.noarch.rpm
+        state: present
+
+    - name: CentOS 7 | Modify mysql source
+      replace:
+        path: /etc/yum.repos.d/mysql-community.repo
+        regexp: "^baseurl=.*$"
+        replace: "baseurl=https://mirrors.tuna.tsinghua.edu.cn/mysql/yum/mysql57-community-el7"
+        backup: yes
+
+    - name: CentOS 7 | install mysql 5.7
+      yum:
+        name:
+          - mysql-community-server
+          - mysql-community-client
+        state: present
+        update_cache: yes
+  when: ansible_distribution_major_version == "7"
+
+- name: CentOS 8 | install mysql 8
+  yum:
+    name: mysql
+    state: present
+    update_cache: yes
+  when: ansible_distribution_major_version == "8"

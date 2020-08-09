@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: db-svc
+  namespace: edusoho
+spec:
+  selector:
+    app: edusoho-db
+  ports:
+    - port: 3306
+      targetPort: db-port
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: php-svc
+  namespace: edusoho
+spec:
+  selector:
+    app: edusoho-php
+  ports:
+    - port: 9000
+      targetPort: php-port
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-svc
+  namespace: edusoho
+spec:
+  selector:
+    app: edusoho-nginx
+  ports:
+    - port: 80
+      targetPort: nginx-port
+  type: NodePort

@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: edusoho-db
+  namespace: edusoho
+spec:
+  selector:
+    matchLabels:
+      app: edusoho-db
+  template:
+    metadata:
+      labels:
+        app: edusoho-db
+    spec:
+      containers:
+        - name: edusoho-db
+          image: mysql:5.7
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: edusoho
+            - name: MYSQL_DATABASE
+              value: edusoho
+            - name: MYSQL_USER
+              value: edusoho
+            - name: MYSQL_PASSWORD
+              value: edusoho
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 3306
+              name: db-port
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: db-pvc
+      volumes:
+        - name: db-pvc
+          emptyDir: {}

@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: edusoho-db
+  namespace: edusoho
+spec:
+  replicas: 1
+  serviceName: edusoho-db
+  selector:
+    matchLabels:
+      app: edusoho-db
+  template:
+    metadata:
+      labels:
+        app: edusoho-db
+    spec:
+      containers:
+        - name: edusoho-db
+          image: mysql:5.7
+          args:
+            - --default-authentication-plugin=mysql_native_password
+            - --character-set-server=utf8mb4
+            - --collation-server=utf8mb4_unicode_ci
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: edusoho
+            - name: MYSQL_DATABASE
+              value: edusoho
+            - name: MYSQL_USER
+              value: edusoho
+            - name: MYSQL_PASSWORD
+              value: edusoho
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 3306
+              name: db-port
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: db-pvc
+      volumes:
+        - name: db-pvc
+          persistentVolumeClaim:
+            claimName: db-pvc

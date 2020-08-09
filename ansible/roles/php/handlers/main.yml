@@ -1,0 +1,11 @@
+- name: Ubuntu restart php
+  systemd:
+    name: php7.1-fpm
+    state: restarted
+    enabled: yes
+
+- name: CentOS restart php
+  systemd:
+    name: php71-php-fpm
+    state: restarted
+    enabled: yes

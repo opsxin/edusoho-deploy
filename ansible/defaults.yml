@@ -1,0 +1,17 @@
+# Nginx 和 PHP 运行用户
+#user:
+#  name: www-data
+#  group: www-data
+
+# edusoho 域名
+#nginx_domain: localhost
+# access 日志名
+#nginx_access_log_name: edusoho.access.log
+# error 日志名
+#nginx_error_log_name: edusoho.error.log
+
+# PHP INI 添加的配置
+#php_vars: |-
+#  post_max_size = 1024M
+#  memory_limit = 1024M
+#  upload_max_filesize = 1024M
