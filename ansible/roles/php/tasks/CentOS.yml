@@ -1,0 +1,66 @@
+- name: Install remi source
+  yum:
+    name: "https://mirrors.tuna.tsinghua.edu.cn/remi/enterprise/remi-release-{{ ansible_distribution_major_version }}.rpm"
+    state: present
+
+- name: Use china epel source
+  shell: sed -e 's!^metalink=!#metalink=!g' \
+    -e 's!^#baseurl=!baseurl=!g' \
+    -e 's!//download\.fedoraproject\.org/pub!//mirrors.tuna.tsinghua.edu.cn!g' \
+    -e 's!http://mirrors\.tuna!https://mirrors.tuna!g' \
+    -i /etc/yum.repos.d/epel*.repo
+  args:
+    executable: /bin/bash
+  changed_when: no
+
+- name: Use china remi source
+  shell: sed -e 's!^metalink=!#metalink=!g' \
+    -e 's!^mirrorlist=!#mirrorlist=!g' \
+    -e 's!^#baseurl=!baseurl=!g' \
+    -e '/^baseurl=/s!https\?://[^/]*/\(remi/\)\?\(.*\)!http://mirrors.huaweicloud.com/remi/\2!g;' \
+    -i /etc/yum.repos.d/remi*.repo
+  args:
+    executable: /bin/bash
+  changed_when: no
+
+- name: CentOS install php 7.1
+  yum:
+    name:
+      - php71-php-pear
+      - php71-php-cli
+      - php71-php-common
+      - php71-php-curl
+      - php71-php-fpm
+      - php71-php-json
+      - php71-php-mbstring
+      - php71-php-mcrypt
+      - php71-php-mysql
+      - php71-php-opcache
+      - php71-php-zip
+      - php71-php-intl
+      - php71-php-gd
+      - php71-php-xml
+    state: present
+    update_cache: yes
+
+- name: Add config to php.ini
+  lineinfile:
+    dest: /etc/opt/remi/php71/php.ini
+    line: "{{ php_vars }}"
+    backup: yes
+  notify: CentOS restart php
+
+- name: Change user
+  replace:
+    path: /etc/opt/remi/php71/php-fpm.d/www.conf
+    regexp: "apache"
+    replace: "{{ user.name }}"
+  notify: CentOS restart php
+
+- name: Change listen
+  lineinfile:
+    dest: /etc/opt/remi/php71/php-fpm.d/www.conf
+    line: "listen = 127.0.0.1:9000"
+    backup: yes
+  when: ansible_distribution_major_version == "8"
+  notify: CentOS restart php

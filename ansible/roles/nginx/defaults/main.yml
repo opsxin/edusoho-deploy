@@ -1,0 +1,9 @@
+# Nginx daemon user
+user:
+  name: www-data
+  group: www-data
+
+# edusoho domain
+nginx_domain: localhost
+nginx_access_log_name: edusoho.access.log
+nginx_error_log_name: edusoho.error.log

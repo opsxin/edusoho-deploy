@@ -1,0 +1,49 @@
+- name: Install software-properties-common
+  apt:
+    name: software-properties-common
+    state: present
+    update_cache: yes
+
+- name: Add repository
+  apt_repository:
+    repo: ppa:ondrej/php
+
+- name: Ubuntu install php 7.1
+  apt:
+    name:
+      - php-pear
+      - php7.1-cli
+      - php7.1-common
+      - php7.1-curl
+      - php7.1-dev
+      - php7.1-fpm
+      - php7.1-json
+      - php7.1-mbstring
+      - php7.1-mcrypt
+      - php7.1-mysql
+      - php7.1-opcache
+      - php7.1-zip
+      - php7.1-intl
+      - php7.1-gd
+      - php7.1-xml
+
+- name: Add config to php.ini
+  lineinfile:
+    dest: /etc/php/7.1/fpm/php.ini
+    line: "{{ php_vars }}"
+    backup: yes
+  notify: Ubuntu restart php
+
+- name: Change user
+  replace:
+    path: /etc/php/7.1/fpm/pool.d/www.conf
+    regexp: "www-data"
+    replace: "{{ user.name }}"
+  notify: Ubuntu restart php
+
+- name: Change listen
+  lineinfile:
+    dest: /etc/php/7.1/fpm/pool.d/www.conf
+    line: "listen = 127.0.0.1:9000"
+    backup: yes
+  notify: Ubuntu restart php

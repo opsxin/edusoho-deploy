@@ -1,0 +1,31 @@
+- name: Ensure group exist
+  group:
+    name: "{{ user.group }}"
+
+- name: Ensure user exist
+  user:
+    name: "{{ user.name }}"
+    group: "{{ user.group | default(user.name) }}"
+
+- name: Install nginx source
+  include_tasks: "{{ ansible_distribution }}.yml"
+
+- name: Install nginx
+  package:
+    name: nginx
+    state: present
+    update_cache: yes
+
+- name: Add nginx.conf
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    backup: yes
+  notify: restart nginx
+
+- name: Add edusoho.conf
+  template:
+    src: edusoho.conf.j2
+    dest: /etc/nginx/conf.d/default.conf
+    backup: yes
+  notify: restart nginx

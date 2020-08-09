@@ -1,0 +1,30 @@
+- name: Download edusoho
+  get_url:
+    url: http://download.edusoho.com/edusoho-8.7.15.zip
+    dest: /tmp/edusoho.zip
+  delegate_to: localhost
+  run_once: yes
+
+- name: Ensure unzip is install
+  package:
+    name: unzip
+    state: present
+
+- name: Ensure /var/www is exist
+  file:
+    path: /var/www
+    state: directory
+
+- name: Unarchive edusoho
+  unarchive:
+    src: /tmp/edusoho.zip
+    dest: /var/www/
+    creates: /var/www/edusoho
+
+- name: Chown edusoho
+  file:
+    path: /var/www/edusoho
+    state: directory
+    owner: "{{ user.name }}"
+    group: "{{ user.group }}"
+    recurse: yes

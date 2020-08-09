@@ -1,0 +1,7 @@
+- name: Ensure user exist
+  user:
+    name: "{{ user.name }}"
+    group: "{{ user.group | default(user.name) }}"
+
+- name: Install php
+  include_tasks: "{{ ansible_distribution }}.yml"
