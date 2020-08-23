@@ -1,0 +1,18 @@
+apiVersion: v2
+appVersion: 8.7.15
+description: Chart for edusoho.
+dependencies:
+  - name: mysql
+    version: 1.6.6
+    repository: http://mirror.azure.cn/kubernetes/charts
+home: https://www.edusoho.com/
+icon: https://www.edusoho.com/favicon.ico
+keywords:
+  - edusoho
+maintainers:
+  - name: Hsin
+name: edusoho
+sources:
+  - https://github.com/opsxin/edusoho-deploy
+type: application
+version: 0.1.0

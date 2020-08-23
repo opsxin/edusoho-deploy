@@ -1,0 +1,13 @@
+{{- if .Values.persistentVolumeClaim.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "edusoho.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  accessModes:
+    - {{ .Values.persistentVolumeClaim.accessModes | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.persistentVolumeClaim.storage | quote }}
+{{- end }}

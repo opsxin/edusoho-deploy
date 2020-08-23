@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "edusoho.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "edusoho.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "edusoho.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+    {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        {{- include "edusoho.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+        - name: init-edusoho
+          command:
+            [
+              "sh",
+              "-c",
+              "if [ ! -d /data/edusoho -a ! -f /data/edusoho.zip ]; then cd /data && wget http://download.edusoho.com/edusoho-{{ .Chart.AppVersion }}.zip -O edusoho.zip && unzip edusoho.zip; chown www-data:www-data -R /data/edusoho; fi",
+            ]
+          image: busybox
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: /data
+              name: {{ .Values.webVolumeName }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          {{- if .Values.livenessProbe }}
+          livenessProbe: {{- toYaml .Values.livenessProbe | nindent 12 }}
+          {{- end }}
+          {{- if .Values.readinessProbe }}
+          readinessProbe: {{- toYaml .Values.readinessProbe | nindent 12 }}
+          {{- end }}
+          {{- if .Values.resources }}
+          resources: {{- toYaml .Values.resources | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+          {{- if .Values.serverBlock }}
+            - name: {{ template "edusoho.fullname" . }}
+              mountPath: /etc/nginx/sites-enabled/
+          {{- end }}
+            - mountPath: /var/www
+              name: {{ .Values.webVolumeName }}
+      volumes:
+      {{- if .Values.serverBlock }}
+        - name: {{ template "edusoho.fullname" . }}
+          configMap:
+            name: {{ template "edusoho.fullname" . }}
+      {{- end }}
+        - name: {{ .Values.webVolumeName }}
+        {{- if .Values.persistentVolumeClaim.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistentVolumeClaim.name }}
+        {{- else }}
+          emptyDir: {}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
