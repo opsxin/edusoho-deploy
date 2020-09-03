@@ -1,13 +1,26 @@
-{{- if .Values.persistentVolumeClaim.enabled }}
+{{- $fullname := include "edusoho.fullname" . }}
+{{- range .Values.persistent }}
+{{- if .enabled }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "edusoho.fullname" . }}
-  namespace: {{ .Release.Namespace }}
+  name: {{ .name }}
+  namespace: {{ $.Release.Namespace }}
+  {{- with .annotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+  {{- end }}
+  labels:
+    app: {{ $fullname }}
+    chart: "{{ $.Chart.Name }}-{{ $.Chart.Version }}"
+    release: "{{ $.Release.Name }}"
+    heritage: "{{ $.Release.Service }}"
 spec:
   accessModes:
-    - {{ .Values.persistentVolumeClaim.accessModes | quote }}
+    - {{ .accessModes | quote }}
   resources:
     requests:
-      storage: {{ .Values.persistentVolumeClaim.storage | quote }}
+      storage: {{ .storage | quote }}
+---
+{{- end }}
 {{- end }}

@@ -15,4 +15,4 @@ name: edusoho
 sources:
   - https://github.com/opsxin/edusoho-deploy
 type: application
-version: 0.1.0
+version: 1.0.0

@@ -4,7 +4,10 @@ metadata:
   name: {{ include "edusoho.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "edusoho.labels" . | nindent 4 }}
+    app: {{ template "edusoho.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -13,4 +16,5 @@ spec:
       protocol: TCP
       name: http
   selector:
-    {{- include "edusoho.selectorLabels" . | nindent 4 }}
+    app: {{ template "edusoho.fullname" . }}
+    release: "{{ .Release.Name }}"
