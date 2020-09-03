@@ -4,7 +4,6 @@ metadata:
   name: edusoho-web
   namespace: edusoho
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: edusoho-web
@@ -19,7 +18,7 @@ spec:
           resources:
             limits:
               memory: "128Mi"
-              cpu: "500m"
+              cpu: "200m"
           ports:
             - containerPort: 80
               name: nginx-port
@@ -28,8 +27,26 @@ spec:
               name: private-files
             - mountPath: /var/www/edusoho/app/data/udisk
               name: udisk
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh", "-c", "nginx -s stop"]
+          readinessProbe:
+            initialDelaySeconds: 10
+            httpGet:
+              path: "/"
+              port: nginx-port
+          # livenessProbe:
+          #   initialDelaySeconds: 30
+          #   timeoutSeconds: 3
+          #   periodSeconds: 30
+          #   httpGet:
+          #     path: "/"
+          #     port: nginx-port
       volumes:
         - name: private-files
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: private-files
         - name: udisk
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: udisk

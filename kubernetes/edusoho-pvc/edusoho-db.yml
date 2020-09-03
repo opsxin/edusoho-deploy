@@ -40,7 +40,12 @@ spec:
           volumeMounts:
             - mountPath: /var/lib/mysql
               name: db-pvc
-      volumes:
-        - name: db-pvc
-          persistentVolumeClaim:
-            claimName: db-pvc
+  volumeClaimTemplates:
+    - metadata:
+        name: db-pvc
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
