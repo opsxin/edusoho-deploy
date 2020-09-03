@@ -14,4 +14,3 @@ docker-compose up -d
 
 - ES 安装向导中，数据库服务器需填写 **db**，即 docker-compose 文件中 MySQL 的 Service 名。
 - 数据库用户，密码等在`.env`文件中定义。
-

@@ -1,16 +1,6 @@
 version: "3"
 
 services:
-  init:
-    image: busybox
-    container_name: download-edusoho
-    command:
-      - "sh"
-      - "-c"
-      - "if [ ! -d /data/edusoho -a ! -f /data/edusoho.zip ]; then cd /data && wget http://download.edusoho.com/edusoho-8.7.15.zip -O edusoho.zip && unzip edusoho.zip && chown www-data:www-data -R /data/edusoho; fi"
-    volumes:
-      - web:/data
-    restart: "no"
   db:
     image: mysql:5.7
     container_name: edusoho-db
@@ -22,32 +12,27 @@ services:
       MYSQL_PASSWORD: $DB_PASSWORD
     volumes:
       - db:/var/lib/mysql
+    networks:
+      - edusoho
     restart: always
-  fpm:
-    build:
-      context: .
-      dockerfile: php/Dockerfile
-    container_name: edusoho-php
+  web:
+    image: registry.cn-shanghai.aliyuncs.com/hsin/edusoho:8.7.15
+    container_name: edusoho-web
+    environment:
+      TZ: Asia/Shanghai
     volumes:
-      - web:/var/www
-    depends_on:
-      - init
-    restart: always
-  nginx:
-    build:
-      context: .
-      dockerfile: nginx/Dockerfile
-    container_name: edusoho-nginx
-    depends_on:
-      - init
-      - fpm
-      - db
-    volumes:
-      - web:/var/www
+      - private_files:/var/www/edusoho/app/data/private_files
+      - udisk:/var/www/edusoho/app/data/udisk
+    networks:
+      - edusoho
     ports:
       - 80:80
     restart: always
 
 volumes:
-  web:
+  private_files:
+  udisk:
   db:
+
+networks:
+  edusoho:
