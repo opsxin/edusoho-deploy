@@ -18,7 +18,7 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
-        with:
+        #with:
           #path: "${{ github.repository }}"
       - name: ls
         run: ls
