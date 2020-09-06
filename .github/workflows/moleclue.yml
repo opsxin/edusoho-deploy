@@ -20,7 +20,9 @@ jobs:
         uses: actions/checkout@v2
       - name: set env
         run: |
-          export NEW_REPOSITORY="./ansible/roles/php/"
+          pwd
+          ls -R
+          export NEW_REPOSITORY="/github/workspace/ansible/roles/php/"
           echo "::set-env name=PROJECT_PATH::$NEW_REPOSITORY"
       - name: molecule
         uses: opsxin/molecule-action@2.6.3
