@@ -1,3 +1,7 @@
+- name: Ensure group exist
+  user:
+    group: "{{ user.group | default(user.name) }}"
+
 - name: Ensure user exist
   user:
     name: "{{ user.name }}"
