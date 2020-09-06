@@ -23,11 +23,10 @@ jobs:
       - name: set env
         run: |
           export NEW_REPOSITORY="ansible/roles/php"
-          echo "::set-env name=GITHUB_REPOSITORY::$NEW_REPOSITORY"
-          echo "::set-env name=TEST::$NEW_REPOSITORY"
+          echo "::set-env name=PROJECT_PATH::$NEW_REPOSITORY"
       - name: show env
         run: env
       - name: molecule
-        uses: robertdebock/molecule-action@2.6.1
+        uses: opsxin/molecule-action@2.6.1
         with:
           image: "${{ matrix.image }}"
