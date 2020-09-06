@@ -1,8 +1,0 @@
----
-- name: Converge
-  hosts: all
-  gather_facts: yes
-  tasks:
-    - name: "Include PHP"
-      include_role:
-        name: "php"
