@@ -18,15 +18,11 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
-        #with:
-          #path: "${{ github.repository }}"
       - name: set env
         run: |
           export NEW_REPOSITORY="ansible/roles/php"
           echo "::set-env name=PROJECT_PATH::$NEW_REPOSITORY"
-      - name: show env
-        run: env
       - name: molecule
-        uses: opsxin/molecule-action@2.6.1
+        uses: opsxin/molecule-action@2.6.2
         with:
           image: "${{ matrix.image }}"
