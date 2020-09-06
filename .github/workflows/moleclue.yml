@@ -20,6 +20,10 @@ jobs:
         uses: actions/checkout@v2
         with:
           path: "ansible/roles/php"
+      - name: ls
+        run: ls -R
+      - name: cd
+        run: cd opsxin/edusoho-deploy
       - name: molecule
         uses: robertdebock/molecule-action@2.6.1
         with:
