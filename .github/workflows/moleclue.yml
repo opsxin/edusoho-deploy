@@ -20,8 +20,8 @@ jobs:
         uses: actions/checkout@v2
         #with:
           #path: "${{ github.repository }}"
-      - name: ls
-        run: ls
+      - name: set env
+        run: export GITHUB_REPOSITORY='ansible/roles/php'
       - name: molecule
         uses: robertdebock/molecule-action@2.6.1
         with:
