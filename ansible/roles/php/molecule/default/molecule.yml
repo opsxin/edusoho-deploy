@@ -25,7 +25,7 @@ driver:
   name: docker
 platforms:
   - name: instance
-    image: "${namespace:-robertdebock}/${image:-fedora}:${tag:-latest}"
+    image: "${namespace:-robertdebock}/${image:-fedora}"
     command: /sbin/init
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
