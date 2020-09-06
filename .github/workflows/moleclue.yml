@@ -22,6 +22,8 @@ jobs:
           #path: "${{ github.repository }}"
       - name: set env
         run: export GITHUB_REPOSITORY='ansible/roles/php'
+      - name: show env
+        run: env
       - name: molecule
         uses: robertdebock/molecule-action@2.6.1
         with:
