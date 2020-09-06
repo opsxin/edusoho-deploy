@@ -21,8 +21,11 @@ jobs:
         #with:
           #path: "${{ github.repository }}"
       - name: set env
-        run: echo "::set-env name=GITHUB_REPOSITORY::ansible/roles/php"
-      - name: shoe env
+        run: |
+          export NEW_REPOSITORY="ansible/roles/php"
+          echo "::set-env name=GITHUB_REPOSITORY::$NEW_REPOSITORY"
+          echo "::set-env name=TEST::$NEW_REPOSITORY"
+      - name: show env
         run: env
       - name: molecule
         uses: robertdebock/molecule-action@2.6.1
