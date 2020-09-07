@@ -44,9 +44,9 @@
     update_cache: yes
 
 - name: Add config to php.ini
-  lineinfile:
-    dest: /etc/opt/remi/php71/php.ini
-    line: "{{ php_vars }}"
+  blockinfile:
+    path: /etc/opt/remi/php71/php.ini
+    block: "{{ php_vars }}"
     backup: yes
   notify: CentOS restart php
 
