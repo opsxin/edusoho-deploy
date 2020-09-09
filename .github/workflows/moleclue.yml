@@ -13,8 +13,8 @@ jobs:
         image:
             #- centos:7
             #- centos:latest
-            - ubuntu:xenial
-            #- ubuntu:bionic
+            #- ubuntu:xenial
+            - ubuntu:bionic
             #- ubuntu:latest
     steps:
       - name: checkout
