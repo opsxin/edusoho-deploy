@@ -12,10 +12,10 @@ jobs:
       matrix:
         image:
             #- centos:7
-            #- centos:latest
+            - centos:latest
             #- ubuntu:xenial
             #- ubuntu:bionic
-            - ubuntu:latest
+            #- ubuntu:latest
     steps:
       - name: checkout
         uses: actions/checkout@v2
