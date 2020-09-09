@@ -1,3 +1,7 @@
+- name: Import key
+  rpm_key:
+      key: "https://rpms.remirepo.net/KEYS.txt"
+
 - name: Install remi source
   yum:
     name: "https://mirrors.tuna.tsinghua.edu.cn/remi/enterprise/remi-release-{{ ansible_distribution_major_version }}.rpm"
