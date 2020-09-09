@@ -1,6 +1,6 @@
 - name: Import key
   rpm_key:
-      key: "https://rpms.remirepo.net/KEYS.txt"
+      key: "https://rpms.remirepo.net/RPM-GPG-KEY-remi2018"
 
 - name: Install remi source
   yum:
