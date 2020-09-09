@@ -11,8 +11,8 @@ jobs:
       max-parallel: 8
       matrix:
         image:
-            #- centos:7
-            - centos:latest
+            - centos:7
+            #- centos:latest
             #- ubuntu:xenial
             #- ubuntu:bionic
             #- ubuntu:latest
