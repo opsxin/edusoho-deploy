@@ -28,9 +28,9 @@
       - php7.1-xml
 
 - name: Add config to php.ini
-  lineinfile:
-    dest: /etc/php/7.1/fpm/php.ini
-    line: "{{ php_vars }}"
+  blockinfile:
+    path: /etc/php/7.1/fpm/php.ini
+    block: "{{ php_vars }}"
     backup: yes
   notify: Ubuntu restart php
 
