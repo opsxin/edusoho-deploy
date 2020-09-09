@@ -12,9 +12,9 @@ jobs:
       matrix:
         image:
             #- centos:7
-            #- centos:latest
+            - centos:latest
             #- ubuntu:xenial
-            - ubuntu:bionic
+            #- ubuntu:bionic
             #- ubuntu:latest
     steps:
       - name: checkout
