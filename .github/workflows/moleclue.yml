@@ -9,13 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 6
-      matrix:
-        image:
-            - centos:7
-            #- centos:latest
-            #- ubuntu:xenial
-            #- ubuntu:bionic
-            #- ubuntu:latest
     steps:
       - name: checkout
         uses: actions/checkout@v2
@@ -26,9 +19,14 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt install docker
+          sudo systemctl status docker
+          sudo systemctl restart docker
           python3 -m pip install --upgrade pip
           python3 -m pip install ansible molecule docker
       - name: Test with molecule
         run: |
           cd ansible
           molecule test
+        env:
+          PY_COLORS: 1 
+          ANSIBLE_FORCE_COLOR: 1
