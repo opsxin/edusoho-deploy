@@ -5,7 +5,21 @@ driver:
   name: docker
 platforms:
   - name: instance1
+    image: "robertdebock/ubuntu:xenial"
+    command: /sbin/init
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: yes
+    pre_build_image: true
+  - name: instance2
     image: "robertdebock/ubuntu:bionic"
+    command: /sbin/init
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: yes
+    pre_build_image: true
+  - name: instance1
+    image: "robertdebock/ubuntu:latest"
     command: /sbin/init
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
@@ -13,6 +27,13 @@ platforms:
     pre_build_image: true
   - name: instance2
     image: "robertdebock/centos:7"
+    command: /sbin/init
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: yes
+    pre_build_image: true
+  - name: instance5
+    image: "robertdebock/centos:latest"
     command: /sbin/init
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
