@@ -8,7 +8,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
-      max-parallel: 8
+      max-parallel: 6
       matrix:
         image:
             - centos:7
@@ -19,12 +19,16 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
-      - name: set env
-        run: |
-          export NEW_REPOSITORY="/github/workspace/ansible/"
-          echo "::set-env name=PROJECT_PATH::$NEW_REPOSITORY"
-          echo "::set-env name=MOLECULE_NO_LOG::false"
-      - name: molecule
-        uses: opsxin/molecule-action@2.6.3
+      - name: Set up Python
+        uses: actions/setup-python@v2
         with:
-          image: "${{ matrix.image }}"
+          python-version: 3.7
+      - name: Install dependencies
+        run: |
+          sudo apt install docker
+          python3 -m pip install --upgrade pip
+          python3 -m pip install ansible molecule docker
+      - name: Test with molecule
+        run: |
+          cd ansible
+          molecule test

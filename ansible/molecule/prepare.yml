@@ -1,7 +1,6 @@
 ---
 - name: Prepare
   hosts: all
-  become: True
   gather_facts: False
   tasks:
     - name: Install python for Ansible
