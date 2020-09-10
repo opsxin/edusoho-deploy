@@ -18,14 +18,12 @@ jobs:
           python-version: 3.7
       - name: Install dependencies
         run: |
-          docker --version
-          sudo systemctl status docker
           python3 -m pip install --upgrade pip
           python3 -m pip install ansible molecule docker
       - name: Test with molecule
         run: |
           cd ansible
-          sudo molecule test
+          molecule test
         env:
           PY_COLORS: 1 
           ANSIBLE_FORCE_COLOR: 1
