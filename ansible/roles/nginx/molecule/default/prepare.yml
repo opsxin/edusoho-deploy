@@ -1,0 +1,9 @@
+---
+- name: Ensure Python was installed
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: "Install python"
+      raw: test -f /usr/local/bin/python || ( apt update; apt install -y python; ) || ( yum update; yum install -y python; )
+      changed_when: no
+      ignore_errors: yes

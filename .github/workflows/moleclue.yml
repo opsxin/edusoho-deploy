@@ -21,7 +21,7 @@ jobs:
         uses: actions/checkout@v2
       - name: set env
         run: |
-          export NEW_REPOSITORY="/github/workspace/ansible/roles/php/"
+          export NEW_REPOSITORY="/github/workspace/ansible/roles/nginx/"
           echo "::set-env name=PROJECT_PATH::$NEW_REPOSITORY"
           echo "::set-env name=MOLECULE_NO_LOG::false"
       - name: molecule
