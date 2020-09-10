@@ -22,8 +22,8 @@ provisioner:
   name: ansible
   playbooks:
     prepare: ../../molecule/prepare.yml
-  options:
-    vvv: True
+  #options:
+    #vvv: True
   inventory:
     links:
       group_vars: ../../group_vars
