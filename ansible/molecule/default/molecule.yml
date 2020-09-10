@@ -26,9 +26,9 @@ provisioner:
     vvv: True
   inventory:
     links:
-      group_vars: ../../../group_vars
+      group_vars: ../../group_vars
   env:
-    ANSIBLE_ROLES_PATH: ../../roles
+    ANSIBLE_ROLES_PATH: ../roles
 scenario:
   name: default
 verifier:
