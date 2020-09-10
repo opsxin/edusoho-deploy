@@ -1,0 +1,35 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: instance1
+    image: "robertdebock/ubuntu:bionic"
+    command: /sbin/init
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: yes
+    pre_build_image: true
+  - name: instance2
+    image: "robertdebock/centos:7"
+    command: /sbin/init
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: yes
+    pre_build_image: true
+provisioner:
+  name: ansible
+  playbooks:
+    prepare: ../../molecule/prepare.yml
+  options:
+    vvv: True
+  inventory:
+    links:
+      group_vars: ../../../group_vars
+  env:
+    ANSIBLE_ROLES_PATH: ../../roles
+scenario:
+  name: default
+verifier:
+  name: ansible
