@@ -3,3 +3,4 @@
   roles:
     - php
     - nginx
+    - db
