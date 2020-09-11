@@ -1,7 +1,5 @@
 - hosts: web
   gather_facts: yes
-  vars_files:
-    - defaults.yml
   roles:
     - { role: nginx }
     - { role: php }

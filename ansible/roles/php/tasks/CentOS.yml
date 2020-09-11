@@ -1,3 +1,7 @@
+- name: Import key
+  rpm_key:
+      key: "https://rpms.remirepo.net/RPM-GPG-KEY-remi2018"
+
 - name: Install remi source
   yum:
     name: "https://mirrors.tuna.tsinghua.edu.cn/remi/enterprise/remi-release-{{ ansible_distribution_major_version }}.rpm"
@@ -44,9 +48,9 @@
     update_cache: yes
 
 - name: Add config to php.ini
-  lineinfile:
-    dest: /etc/opt/remi/php71/php.ini
-    line: "{{ php_vars }}"
+  blockinfile:
+    path: /etc/opt/remi/php71/php.ini
+    block: "{{ php_vars }}"
     backup: yes
   notify: CentOS restart php
 

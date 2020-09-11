@@ -1,0 +1,38 @@
+---
+name: Ansible molecule ci
+
+on:
+  push:
+    paths:
+      - "ansible/**"
+  pull_request:
+    paths:
+      - "ansible/**"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install ansible molecule docker
+      - name: Disable mysql apparmor
+        run: |
+          sudo ln -s /etc/apparmor.d/usr.sbin.mysqld /etc/apparmor.d/disable/
+          sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
+      - name: Test with molecule
+        run: |
+          cd ansible
+          molecule test
+        env:
+          PY_COLORS: 1 
+          ANSIBLE_FORCE_COLOR: 1

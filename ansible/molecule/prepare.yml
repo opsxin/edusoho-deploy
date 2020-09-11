@@ -1,0 +1,22 @@
+---
+- name: Install dependencies
+  hosts: all
+  gather_facts: False
+  tasks:
+    - name: Install python for Ansible
+      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal) || ( yum update && yum install -y python2)
+      changed_when: False
+      ignore_errors: yes
+    - name: Fetch /etc/os-release
+      raw: cat /etc/os-release
+      register: os_release
+      changed_when: false
+      check_mode: false
+      environment: {}
+    - name: Install dirmngr
+      apt:
+        name: dirmngr
+        state: present
+        update_cache: yes
+      changed_when: false
+      when: '"Debian" in os_release.stdout or "Ubuntu" in os_release.stdout'

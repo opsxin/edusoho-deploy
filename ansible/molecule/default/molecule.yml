@@ -1,0 +1,56 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: Ubuntu1604
+    image: "geerlingguy/docker-ubuntu1604-ansible"
+    command: /sbin/init
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: yes
+    pre_build_image: true
+  - name: Ubuntu1804
+    image: "geerlingguy/docker-ubuntu1804-ansible"
+    command: /sbin/init
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: yes
+    pre_build_image: true
+  - name: Ubuntu2004
+    image: "geerlingguy/docker-ubuntu2004-ansible"
+    command: /sbin/init
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: yes
+    pre_build_image: true
+  - name: CentOS7
+    image: "geerlingguy/docker-centos7-ansible"
+    command: /sbin/init
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: yes
+    pre_build_image: true
+  - name: CentOS8
+    image: "geerlingguy/docker-centos8-ansible"
+    command: /sbin/init
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: yes
+    pre_build_image: true
+provisioner:
+  name: ansible
+  playbooks:
+    prepare: ../../molecule/prepare.yml
+  #options:
+    #vvv: True
+  inventory:
+    links:
+      group_vars: ../../group_vars
+  env:
+    ANSIBLE_ROLES_PATH: ../../roles
+scenario:
+  name: default
+verifier:
+  name: ansible
