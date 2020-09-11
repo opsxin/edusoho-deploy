@@ -2,12 +2,12 @@
 name: Ansible molecule ci
 
 on:
-  - push:
-      paths:
-        - "ansible/**"
-  - pull_request:
-      paths:
-        - "ansible/**"
+  push:
+    paths:
+      - "ansible/**"
+  pull_request:
+    paths:
+      - "ansible/**"
 
 jobs:
   test:
