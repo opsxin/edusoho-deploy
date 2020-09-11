@@ -1,5 +1,5 @@
 ---
-- name: Prepare
+- name: Install dependencies
   hosts: all
   gather_facts: False
   tasks:
