@@ -1,7 +1,7 @@
 ---
 - hosts: all
   roles:
-    - php
     - nginx
+    - php
     - db
     - edusoho

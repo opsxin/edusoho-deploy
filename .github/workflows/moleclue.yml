@@ -1,8 +1,9 @@
 ---
-name: CI
+name: Ansible molecule ci
 
 on:
   - push
+  - pull_request
 
 jobs:
   test:
@@ -20,7 +21,7 @@ jobs:
         run: |
           python3 -m pip install --upgrade pip
           python3 -m pip install ansible molecule docker
-      - name: Disable apparmor
+      - name: Disable mysql apparmor
         run: |
           sudo ln -s /etc/apparmor.d/usr.sbin.mysqld /etc/apparmor.d/disable/
           sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
