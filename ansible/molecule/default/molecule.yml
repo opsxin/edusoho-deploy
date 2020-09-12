@@ -5,6 +5,9 @@ driver:
   name: docker
 platforms:
   - name: Ubuntu1604
+    groups:
+      - web
+      - db
     image: "geerlingguy/docker-ubuntu1604-ansible"
     command: /sbin/init
     volumes:
@@ -12,6 +15,9 @@ platforms:
     privileged: yes
     pre_build_image: true
   - name: Ubuntu1804
+    groups:
+      - web
+      - db
     image: "geerlingguy/docker-ubuntu1804-ansible"
     command: /sbin/init
     volumes:
@@ -19,6 +25,9 @@ platforms:
     privileged: yes
     pre_build_image: true
   - name: Ubuntu2004
+    groups:
+      - web
+      - db
     image: "geerlingguy/docker-ubuntu2004-ansible"
     command: /sbin/init
     volumes:
@@ -26,6 +35,9 @@ platforms:
     privileged: yes
     pre_build_image: true
   - name: CentOS7
+    groups:
+      - web
+      - db
     image: "geerlingguy/docker-centos7-ansible"
     command: /sbin/init
     volumes:
@@ -33,6 +45,9 @@ platforms:
     privileged: yes
     pre_build_image: true
   - name: CentOS8
+    groups:
+      - web
+      - db
     image: "geerlingguy/docker-centos8-ansible"
     command: /sbin/init
     volumes:
@@ -45,6 +60,9 @@ provisioner:
     prepare: ../../molecule/prepare.yml
   #options:
     #vvv: True
+  config_options:
+    defaults:
+      callback_whitelist: profile_tasks
   inventory:
     links:
       group_vars: ../../group_vars
