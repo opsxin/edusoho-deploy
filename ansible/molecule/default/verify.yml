@@ -6,16 +6,11 @@
         url: "http://127.0.0.1"
         return_content: yes
       register: result
-    - name: Assert Nginx and PHP status
-      fail:
-        msg: "Nginx or PHP is stopping"
-      when: "'EduSoho' not in result.content"
+      failed_when: "'EduSoho' not in result.content"
     - name: Check MySQL
-      command:
+      command: 
         cmd: service mysql status
         warn: no
       register: result2
-    - name: Assert MySQL status
-      fail:
-        msg: "MySQL is stopping"
-      when: "'running' not in result2.stdout"
+      changed_when: no
+      failed_when: "'running' not in result2.stdout"
