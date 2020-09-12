@@ -24,6 +24,7 @@
           - mysql-client
         state: present
         update_cache: yes
+      notify: Ubuntu | Restart MySQL
   when: ansible_distribution_version | float < 20.04
 
 - name: Ubuntu 20 | Install mysql 8
@@ -33,10 +34,6 @@
       - mysql-client-8.0
     state: present
     update_cache: yes
+  notify: Ubuntu | Restart MySQL
   when: ansible_distribution_version | float == 20.04
 
-- name: Ubuntu | Restart MySQL
-  systemd:
-    name: mysql
-    state: restarted
-    enabled: yes

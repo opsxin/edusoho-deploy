@@ -19,6 +19,7 @@
           - mysql-community-client
         state: present
         update_cache: yes
+      notify: CentOS | Restart MySQL
   when: ansible_distribution_major_version == "7"
 
 - name: CentOS 8 | install mysql 8
@@ -26,10 +27,6 @@
     name: mysql-server
     state: present
     update_cache: yes
+  notify: CentOS | Restart MySQL
   when: ansible_distribution_major_version == "8"
 
-- name: CentOS | Restart MySQL
-  systemd:
-    name: mysqld
-    state: restarted
-    enabled: yes
