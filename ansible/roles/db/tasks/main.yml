@@ -1,8 +1,2 @@
 - name: Install mysql
   include_tasks: "{{ ansible_distribution }}.yml"
-
-- name: Restart MySQL
-  systemd: 
-    name: mysql
-    state: restarted
-    enabled: yes

@@ -27,3 +27,9 @@
     state: present
     update_cache: yes
   when: ansible_distribution_major_version == "8"
+
+- name: CentOS | Restart MySQL
+  systemd:
+    name: mysqld
+    state: restarted
+    enabled: yes
