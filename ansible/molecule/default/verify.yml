@@ -1,5 +1,5 @@
 - hosts: all
-  gather_facts: no
+  #gather_facts: no
   tasks:
     - name: Check Nginx and PHP
       uri:
@@ -7,10 +7,19 @@
         return_content: yes
       register: result
       failed_when: "'EduSoho' not in result.content"
-    - name: Check MySQL
-      command: 
+    - name: Ubuntu | Check MySQL
+      command:
         cmd: service mysql status
         warn: no
       register: result2
       changed_when: no
       failed_when: "'running' not in result2.stdout"
+      when: ansible_distribution == "Ubuntu"
+    - name: CentOS | Check MySQL
+      command:
+        cmd: service mysqld status
+        warn: no
+      register: result3
+      changed_when: no
+      failed_when: "'running' not in result3.stdout"
+      when: ansible_distribution == "CentOS"
