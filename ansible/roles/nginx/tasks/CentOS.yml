@@ -1,4 +1,4 @@
-- name: Add nginx repo
+- name: CentOS | Add nginx repo
   copy:
     src: nginx.repo
     dest: /etc/yum.repos.d/nginx.repo

@@ -5,19 +5,19 @@
   when: ansible_distribution_major_version | int > 16
 
 - block:
-    - name: Ubuntu 16,18 | install mysql key
+    - name: Ubuntu 16,18 | Install mysql key
       apt_key:
         keyserver: keyserver.ubuntu.com
         id: 8C718D3B5072E1F5
         state: present
 
-    - name: Ubuntu 16,18 | install mysql repository
+    - name: Ubuntu 16,18 | Install mysql repository
       apt_repository:
         repo: "deb http://mirrors.tuna.tsinghua.edu.cn/mysql/apt/ubuntu/ {{ ansible_distribution_release }} mysql-5.7"
         filename: mysql
         update_cache: no
 
-    - name: Ubuntu 16,18 | install mysql 5.7
+    - name: Ubuntu 16,18 | Install mysql 5.7
       apt:
         name:
           - mysql-server
@@ -26,7 +26,7 @@
         update_cache: yes
   when: ansible_distribution_version | float < 20.04
 
-- name: Ubuntu 20 | install mysql 8
+- name: Ubuntu 20 | Install mysql 8
   apt:
     name:
       - mysql-server-8.0

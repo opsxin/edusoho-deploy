@@ -1,4 +1,4 @@
-- name: Ensure dependencies
+- name: Ubuntu | Install dependencies
   apt:
     name:
       - curl
@@ -7,12 +7,12 @@
     state: present
     update_cache: yes
 
-- name: Add nginx gpg key
+- name: Ubuntu | Add nginx gpg key
   apt_key:
     url: "http://mirrors.ustc.edu.cn/nginx/keys/nginx_signing.key"
     state: present
 
-- name: Add nginx repository
+- name: Ubuntu | Add nginx repository
   apt_repository:
     repo: "deb http://mirrors.ustc.edu.cn/nginx/ubuntu/ {{ ansible_distribution_release }} nginx"
     filename: nginx

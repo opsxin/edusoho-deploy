@@ -2,6 +2,6 @@
 - hosts: all
   roles:
     - nginx
-    - php
-    - db
+    - {role: php, skip-tags: net}
+    - {role: db, skip-tags: net}
     - edusoho

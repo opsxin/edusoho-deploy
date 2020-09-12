@@ -3,6 +3,7 @@
     url: http://download.edusoho.com/edusoho-8.7.15.zip
     dest: /tmp/edusoho.zip
   delegate_to: localhost
+  connection: local
   run_once: yes
 
 - name: Ensure unzip is install
