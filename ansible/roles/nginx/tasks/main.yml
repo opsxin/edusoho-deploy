@@ -1,8 +1,8 @@
-- name: Ensure group exist
+- name: Ensure nginx group exist
   group:
     name: "{{ user.group }}"
 
-- name: Ensure user exist
+- name: Ensure nginx user exist
   user:
     name: "{{ user.name }}"
     group: "{{ user.group | default(user.name) }}"
@@ -16,7 +16,7 @@
     state: present
     update_cache: yes
 
-- name: Add nginx.conf
+- name: Modify nginx.conf
   template:
     src: nginx.conf.j2
     dest: /etc/nginx/nginx.conf
@@ -29,3 +29,6 @@
     dest: /etc/nginx/conf.d/default.conf
     backup: yes
   notify: restart nginx
+
+- name: Restart nginx
+  meta: flush_handlers

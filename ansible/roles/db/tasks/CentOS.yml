@@ -1,5 +1,5 @@
 - block:
-    - name: CentOS 7 | install mysql source
+    - name: CentOS 7 | Install mysql source
       yum:
         name: https://mirrors.ustc.edu.cn/mysql-repo/mysql57-community-release-el7-9.noarch.rpm
         state: present
@@ -10,19 +10,23 @@
         regexp: "^baseurl=.*$"
         replace: "baseurl=https://mirrors.tuna.tsinghua.edu.cn/mysql/yum/mysql57-community-el7"
         backup: yes
+      tags: ["net"]
 
-    - name: CentOS 7 | install mysql 5.7
+    - name: CentOS 7 | Install mysql 5.7
       yum:
         name:
           - mysql-community-server
           - mysql-community-client
         state: present
         update_cache: yes
+      notify: CentOS | Restart MySQL
   when: ansible_distribution_major_version == "7"
 
 - name: CentOS 8 | install mysql 8
   yum:
-    name: mysql
+    name: mysql-server
     state: present
     update_cache: yes
+  notify: CentOS | Restart MySQL
   when: ansible_distribution_major_version == "8"
+

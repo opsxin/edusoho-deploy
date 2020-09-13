@@ -1,0 +1,12 @@
+- name: CentOS | Restart MySQL
+  systemd:
+    name: mysqld
+    state: restarted
+    enabled: yes
+
+- name: Ubuntu | Restart MySQL
+  systemd:
+    name: mysql
+    state: restarted
+    enabled: yes
+

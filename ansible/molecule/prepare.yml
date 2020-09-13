@@ -19,4 +19,4 @@
         state: present
         update_cache: yes
       changed_when: false
-      when: '"Debian" in os_release.stdout or "Ubuntu" in os_release.stdout'
+      when: '"Ubuntu" in os_release.stdout'

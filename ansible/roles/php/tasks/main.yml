@@ -9,3 +9,6 @@
 
 - name: Install php
   include_tasks: "{{ ansible_distribution }}.yml"
+
+- name: Restart PHP
+  meta: flush_handlers

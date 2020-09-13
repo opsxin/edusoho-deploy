@@ -1,14 +1,13 @@
 server {
     listen 80;
 
-    # [改] 网站的域名
     server_name {{ nginx_domain | default('localhost')}};
 
     # 程序的安装路径
     root /var/www/edusoho/web;
 
     # 日志路径
-    access_log /var/log/nginx/{{ nginx_access_log_name | default('access.log') }};
+    access_log /var/log/nginx/{{ nginx_access_log_name | default('access.log') }} main;
     error_log /var/log/nginx/{{ nginx_error_log_name | default('error.log') }};
 
     location / {

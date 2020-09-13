@@ -1,7 +1,7 @@
 # Nginx 和 PHP 运行用户
-#user:
-#  name: www-data
-#  group: www-data
+user:
+  name: www
+  group: www
 
 # edusoho 域名
 #nginx_domain: localhost
