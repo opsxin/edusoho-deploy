@@ -2,12 +2,12 @@
 name: Baremetal script ci
 
 on:
-  push:
-    paths:
-      - "baremetal/**"
-  pull_request:
-    paths:
-      - "baremetal/**"
+  - push
+      #  paths:
+      #    - "baremetal/**"
+      #pull_request:
+      #  paths:
+      #    - "baremetal/**"
 
 jobs:
   test:
