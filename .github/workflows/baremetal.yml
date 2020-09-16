@@ -29,8 +29,8 @@ jobs:
       - name: Test script in baremetal
         run: |
           cd baremetal
-          sudo bash deploy.sh
+          bash deploy.sh
       - name: curl localhost
         run: curl -L localhost
       - name: mysql status
-        run: sudo systemctl status mysql
+        run: systemctl status mysql
