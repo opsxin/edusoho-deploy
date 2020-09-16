@@ -14,8 +14,11 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       max-parallel: 4
-    #container:
-      #image:  debian:10
+    container:
+        image:  centos:7
+        volumes:
+          - /sys/fs/cgroup:/sys/fs/cgroup:ro
+        options: "--privileged --init"
     steps:
       - name: checkout
         uses: actions/checkout@v2
