@@ -1,0 +1,33 @@
+---
+name: Baremetal script ci
+
+on:
+  push:
+    paths:
+      - "baremetal/**"
+  pull_request:
+    paths:
+      - "baremetal/**"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+    #container:
+      #image:  debian:10
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: Disable mysql apparmor
+        run: |
+          sudo ln -s /etc/apparmor.d/usr.sbin.mysqld /etc/apparmor.d/disable/
+          sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
+      - name: Test script in baremetal
+        run: |
+          cd baremetal
+          sudo bash deploy.sh
+      - name: curl localhost
+        run: curl localhost
+      - name: mysql status
+        run: sudo systemctl status mysql
