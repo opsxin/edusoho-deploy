@@ -11,7 +11,7 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       max-parallel: 4
     #container:
@@ -28,6 +28,6 @@ jobs:
           cd baremetal
           sudo bash deploy.sh
       - name: curl localhost
-        run: curl localhost
+        run: curl -L localhost
       - name: mysql status
         run: sudo systemctl status mysql
