@@ -14,23 +14,38 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       max-parallel: 4
-    container:
-        image:  centos:7
-        volumes:
-          - /sys/fs/cgroup:/sys/fs/cgroup:ro
-        options: "--privileged --init"
     steps:
       - name: checkout
         uses: actions/checkout@v2
-        #- name: Disable mysql apparmor
-        #  run: |
-        #    sudo ln -s /etc/apparmor.d/usr.sbin.mysqld /etc/apparmor.d/disable/
-        #    sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
-      - name: Test script in baremetal
+      - name: Disable mysql apparmor
         run: |
-          cd baremetal
-          bash deploy.sh
+          sudo ln -s /etc/apparmor.d/usr.sbin.mysqld /etc/apparmor.d/disable/
+          sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
+      - name: Start docker container
+        run: |
+          docker run -d -v ${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE} -w ${GITHUB_WORKSPACE} -v /sys/fs/cgroup:/sys/fs/cgroup:ro --privileged --name centos7 centos:7 /sbin/init
+          docker run -d -v ${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE} -w ${GITHUB_WORKSPACE} -v /sys/fs/cgroup:/sys/fs/cgroup:ro --privileged --name centos8 centos:8 /sbin/init
+        docker run -d -v ${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE} -w ${GITHUB_WORKSPACE} -v /sys/fs/cgroup:/sys/fs/cgroup:ro --privileged --name ubuntu16 ubuntu:16.04 /sbin/init
+        docker run -d -v ${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE} -w ${GITHUB_WORKSPACE} -v /sys/fs/cgroup:/sys/fs/cgroup:ro --privileged --name ubuntu18 ubuntu:18.04 /sbin/init
+        docker run -d -v ${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE} -w ${GITHUB_WORKSPACE} -v /sys/fs/cgroup:/sys/fs/cgroup:ro --privileged --name ubuntu20 Ubuntu:20.04 /sbin/init
+      - name: Exec script
+        run: |
+          docker exec -it centos7 bash -c 'cd baremetal && bash deploy.sh'
+          docker exec -it centos8 bash -c 'cd baremetal && bash deploy.sh'
+          docker exec -it ubuntu16 bash -c 'cd baremetal && bash deploy.sh'
+          docker exec -it ubuntu18 bash -c 'cd baremetal && bash deploy.sh'
+          docker exec -it ubuntu20 bash -c 'cd baremetal && bash deploy.sh'
       - name: curl localhost
-        run: curl -L localhost
+        run: |
+          docker exec -it centos7 bash -c 'curl -L 127.0.0.1'
+          docker exec -it centos8 bash -c 'curl -L 127.0.0.1'
+          docker exec -it ubuntu16 bash -c 'curl -L 127.0.0.1'
+          docker exec -it ubuntu18 bash -c 'curl -L 127.0.0.1'
+          docker exec -it ubuntu20 bash -c 'curl -L 127.0.0.1'
       - name: mysql status
-        run: systemctl status mysql
+        run: |
+          docker exec -it centos7 bash -c 'systemctl status mysqld'
+          docker exec -it centos8 bash -c 'systemctl status mysqld'
+          docker exec -it ubuntu16 bash -c 'systemctl status mysql'
+          docker exec -it ubuntu18 bash -c 'systemctl status mysql'
+          docker exec -it ubuntu20 bash -c 'systemctl status mysql'
