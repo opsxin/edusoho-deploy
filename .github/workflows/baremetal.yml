@@ -14,6 +14,13 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       max-parallel: 4
+      matrix:
+        images:
+          - geerlingguy/docker-centos7-ansible
+          - geerlingguy/docker-centos8-ansible
+          - geerlingguy/docker-ubuntu1604-ansible
+          - geerlingguy/docker-ubuntu1804-ansible
+          - geerlingguy/docker-ubuntu2004-ansible
     steps:
       - name: checkout
         uses: actions/checkout@v2
@@ -23,29 +30,13 @@ jobs:
           sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
       - name: Start docker container
         run: |
-          docker run -d -v ${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE} -w ${GITHUB_WORKSPACE} -v /sys/fs/cgroup:/sys/fs/cgroup:ro --privileged --name centos7 centos:7 /sbin/init
-          docker run -d -v ${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE} -w ${GITHUB_WORKSPACE} -v /sys/fs/cgroup:/sys/fs/cgroup:ro --privileged --name centos8 centos:8 /sbin/init
-          docker run -d -v ${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE} -w ${GITHUB_WORKSPACE} -v /sys/fs/cgroup:/sys/fs/cgroup:ro --privileged --name ubuntu16 geerlingguy/docker-ubuntu1604-ansible /sbin/init
-          docker run -d -v ${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE} -w ${GITHUB_WORKSPACE} -v /sys/fs/cgroup:/sys/fs/cgroup:ro --privileged --name ubuntu18 geerlingguy/docker-ubuntu1804-ansible /sbin/init
-          docker run -d -v ${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE} -w ${GITHUB_WORKSPACE} -v /sys/fs/cgroup:/sys/fs/cgroup:ro --privileged --name ubuntu20 geerlingguy/docker-ubuntu2004-ansible /sbin/init
+          docker run -d -v ${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE} -w ${GITHUB_WORKSPACE} -v /sys/fs/cgroup:/sys/fs/cgroup:ro --privileged --name test ${{ matrix.images }} /sbin/init
       - name: Exec script
         run: |
-          docker exec -i centos7 bash -c 'cd baremetal && bash deploy.sh'
-          docker exec -i centos8 bash -c 'cd baremetal && bash deploy.sh'
-          docker exec -i ubuntu16 bash -c 'cd baremetal && bash deploy.sh'
-          docker exec -i ubuntu18 bash -c 'cd baremetal && bash deploy.sh'
-          docker exec -i ubuntu20 bash -c 'cd baremetal && bash deploy.sh'
+          docker exec -i test bash -c 'cd baremetal && bash deploy.sh'
       - name: curl localhost
         run: |
-          docker exec -i centos7 bash -c 'curl -L 127.0.0.1'
-          docker exec -i centos8 bash -c 'curl -L 127.0.0.1'
-          docker exec -i ubuntu16 bash -c 'curl -L 127.0.0.1'
-          docker exec -i ubuntu18 bash -c 'curl -L 127.0.0.1'
-          docker exec -i ubuntu20 bash -c 'curl -L 127.0.0.1'
+          docker exec -i test bash -c 'curl -L 127.0.0.1'
       - name: mysql status
         run: |
-          docker exec -i centos7 bash -c 'systemctl status mysqld'
-          docker exec -i centos8 bash -c 'systemctl status mysqld'
-          docker exec -i ubuntu16 bash -c 'systemctl status mysql'
-          docker exec -i ubuntu18 bash -c 'systemctl status mysql'
-          docker exec -i ubuntu20 bash -c 'systemctl status mysql'
+          docker exec -i test bash -c 'systemctl status mysql || systemctl status mysqld'
