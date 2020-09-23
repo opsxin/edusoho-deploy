@@ -173,7 +173,7 @@ install_mysql() {
         yum install -y https://mirrors.ustc.edu.cn/mysql-repo/mysql57-community-release-el7-9.noarch.rpm
         yum makecache && yum install -y mysql-community-server mysql-community-client
     elif [ "${os}" == "centos" -a "${os_version}" -eq 8 ]; then
-        yum install -y mysql
+        yum install -y mysql mysql-server
     elif [[ "${os}" == "ubuntu" && "${os_version}" -lt 2004 ]]; then
         apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 8C718D3B5072E1F5
         add-apt-repository "deb https://mirrors.tuna.tsinghua.edu.cn/mysql/apt/ubuntu/ $(grep UBUNTU_CODENAME /etc/os-release | cut -d= -f2) mysql-5.7"
