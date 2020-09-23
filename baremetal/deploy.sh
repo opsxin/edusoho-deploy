@@ -147,7 +147,8 @@ post_max_size = 1024M
 memory_limit = 1024M
 upload_max_filesize = 1024M
 EOF
-        sed -i "s/apache/${running_user}/g" /etc/opt/remi/php71/php-fpm.d/www.conf
+        sed -i -e "s/apache/${running_user}/g" -e "s/^listen = .*/listen = 127.0.0.1:9000/" \
+            /etc/opt/remi/php71/php-fpm.d/www.conf
         systemctl restart php71-php-fpm
     else
         export DEBIAN_FRONTEND=noninteractive
