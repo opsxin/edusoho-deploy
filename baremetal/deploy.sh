@@ -150,6 +150,7 @@ EOF
         sed -i "s/apache/${running_user}/g" /etc/opt/remi/php71/php-fpm.d/www.conf
         systemctl restart php71-php-fpm
     else
+        export DEBIAN_FRONTEND=noninteractive
         apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 4F4EA0AAE5267A6C
         add-apt-repository -y 'ppa:ondrej/php'
         apt update && apt install -y \
