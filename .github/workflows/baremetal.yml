@@ -13,7 +13,8 @@ jobs:
   test:
     runs-on: ubuntu-20.04
     strategy:
-      max-parallel: 4
+      max-parallel: 5
+      fail-fast: false
       matrix:
         images:
           - geerlingguy/docker-centos7-ansible
@@ -33,4 +34,10 @@ jobs:
           docker run -d -v ${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE} -w ${GITHUB_WORKSPACE} -v /sys/fs/cgroup:/sys/fs/cgroup:ro --privileged --name test ${{ matrix.images }} /sbin/init
       - name: Exec script
         run: |
-          docker exec -i test bash -c 'cd baremetal && bash deploy.sh && curl -L 127.0.0.1 && systemctl status mysql || systemctl status mysqld || true'
+          docker exec test bash -c 'cd baremetal && bash deploy.sh'
+      - name: Test Nginx and PHP
+        run: |
+          docker exec test bash -c 'curl -L 127.0.0.1'
+      - name: Test MySQL
+        run: |
+          docker exec test bash -c 'systemctl status mysql || systemctl status mysqld || true'

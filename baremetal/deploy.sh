@@ -148,7 +148,7 @@ memory_limit = 1024M
 upload_max_filesize = 1024M
 EOF
         sed -i "s/apache/${running_user}/g" /etc/opt/remi/php71/php-fpm.d/www.conf
-        systemctl restart php71-fpm
+        systemctl restart php71-php-fpm
     else
         apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 4F4EA0AAE5267A6C
         add-apt-repository -y 'ppa:ondrej/php'
