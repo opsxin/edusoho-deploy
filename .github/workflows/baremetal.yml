@@ -3,11 +3,11 @@ name: Baremetal script ci
 
 on:
   - push
-      #  paths:
-      #    - "baremetal/**"
-      #pull_request:
-      #  paths:
-      #    - "baremetal/**"
+      paths:
+        - "baremetal/**"
+    pull_request:
+      paths:
+        - "baremetal/**"
 
 jobs:
   test:
@@ -37,7 +37,7 @@ jobs:
           docker exec test bash -c 'cd baremetal && bash deploy.sh'
       - name: Test Nginx and PHP
         run: |
-          docker exec test bash -c 'curl -L 127.0.0.1'
+          docker exec test bash -c 'curl -L 127.0.0.1 | grep "EduSoho"'
       - name: Test MySQL
         run: |
           docker exec test bash -c 'systemctl status mysql || systemctl status mysqld || true'
