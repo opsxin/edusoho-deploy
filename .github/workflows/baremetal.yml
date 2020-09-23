@@ -25,9 +25,9 @@ jobs:
         run: |
           docker run -d -v ${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE} -w ${GITHUB_WORKSPACE} -v /sys/fs/cgroup:/sys/fs/cgroup:ro --privileged --name centos7 centos:7 /sbin/init
           docker run -d -v ${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE} -w ${GITHUB_WORKSPACE} -v /sys/fs/cgroup:/sys/fs/cgroup:ro --privileged --name centos8 centos:8 /sbin/init
-          docker run -d -v ${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE} -w ${GITHUB_WORKSPACE} -v /sys/fs/cgroup:/sys/fs/cgroup:ro --privileged --name ubuntu16 ubuntu:16.04 /sbin/init
-          docker run -d -v ${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE} -w ${GITHUB_WORKSPACE} -v /sys/fs/cgroup:/sys/fs/cgroup:ro --privileged --name ubuntu18 ubuntu:18.04 /sbin/init
-          docker run -d -v ${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE} -w ${GITHUB_WORKSPACE} -v /sys/fs/cgroup:/sys/fs/cgroup:ro --privileged --name ubuntu20 Ubuntu:20.04 /sbin/init
+          docker run -d -v ${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE} -w ${GITHUB_WORKSPACE} -v /sys/fs/cgroup:/sys/fs/cgroup:ro --privileged --name ubuntu16 geerlingguy/docker-ubuntu1604-ansible /sbin/init
+          docker run -d -v ${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE} -w ${GITHUB_WORKSPACE} -v /sys/fs/cgroup:/sys/fs/cgroup:ro --privileged --name ubuntu18 geerlingguy/docker-ubuntu1804-ansible /sbin/init
+          docker run -d -v ${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE} -w ${GITHUB_WORKSPACE} -v /sys/fs/cgroup:/sys/fs/cgroup:ro --privileged --name ubuntu20 geerlingguy/docker-ubuntu2004-ansible /sbin/init
       - name: Exec script
         run: |
           docker exec -it centos7 bash -c 'cd baremetal && bash deploy.sh'
