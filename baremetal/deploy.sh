@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -u
 
 ensure_group_exist() {
     egrep "^${running_group}" /etc/group >& /dev/null
@@ -223,14 +223,15 @@ if grep -qs "ubuntu" /etc/os-release; then
 elif [ -e /etc/centos-release ]; then
 	os="centos"
 	os_version="$(grep -oE '[0-9]+' /etc/centos-release | head -1)"
-	running_group="nogroup"
+	running_group="nobody"
 	running_user="nobody"
 else
 	echo "暂时只支持 Ubuntu 16.04,18.04,20.04 和 CentOS 7,8。"
 	exit 1
 fi
 
-[ "${os}" == "centos" ] && centos_source
+## 修改为国内源，加速下载
+#[ "${os}" == "centos" ] && centos_source
 
 ensure_group_exist
 ensure_user_exist
