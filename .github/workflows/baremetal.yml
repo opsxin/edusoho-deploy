@@ -1,5 +1,5 @@
 ---
-name: Baremetal script ci
+name: Baremetal script
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
       - "baremetal/**"
 
 jobs:
-  test:
+  bare:
     runs-on: ubuntu-20.04
     strategy:
       max-parallel: 5
@@ -30,14 +30,12 @@ jobs:
           sudo ln -s /etc/apparmor.d/usr.sbin.mysqld /etc/apparmor.d/disable/
           sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
       - name: Start docker container
-        run: |
-          docker run -d -v ${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE} -w ${GITHUB_WORKSPACE} -v /sys/fs/cgroup:/sys/fs/cgroup:ro --privileged --name test ${{ matrix.images }} /sbin/init
+        run: docker run -d -v ${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE} -w ${GITHUB_WORKSPACE} -v /sys/fs/cgroup:/sys/fs/cgroup:ro --privileged --name test ${{ matrix.images }} /sbin/init
       - name: Exec script
-        run: |
-          docker exec test bash -c 'cd baremetal && bash deploy.sh'
+        run: docker exec test bash -c 'cd baremetal && bash deploy.sh'
+      - name: Start MySQL
+        run: docker exec test bash -c 'systemctl restart mysql || systemctl restart mysqld'
       - name: Test Nginx and PHP
-        run: |
-          docker exec test bash -c 'curl -L 127.0.0.1 | grep "EduSoho"'
+        run: docker exec test bash -c 'curl -L 127.0.0.1 | grep "EduSoho"'
       - name: Test MySQL
-        run: |
-          docker exec test bash -c 'systemctl status mysql || systemctl status mysqld || true'
+        run: docker exec test bash -c 'systemctl status mysql || systemctl status mysqld'
