@@ -19,6 +19,7 @@ RUN cd /root && git clone git://github.com/vozlt/nginx-module-vts.git \
     --with-stream_ssl_preread_module --add-module=/root/nginx-module-vts \
     && make && make install
 
+
 FROM debian:10
 
 LABEL maintainer="hsin@opsxin.com"
@@ -32,16 +33,17 @@ WORKDIR /usr/local/nginx
 
 RUN apt update \
     && apt install -y --no-install-recommends \
-    libpcre3 libpcre3-dev zlib1g-dev openssl libssl-dev \
-    curl gnupg2 ca-certificates apt-transport-https \
+        libpcre3 libpcre3-dev zlib1g-dev openssl libssl-dev \
+        curl gnupg2 ca-certificates apt-transport-https \
     && rm -rf /var/lib/apt/lists/*
 
 RUN curl https://packages.sury.org/php/apt.gpg -o- | apt-key add - \
     && echo "deb https://packages.sury.org/php/ buster main" | tee /etc/apt/sources.list.d/php7.list \
     && apt update && apt install -y --no-install-recommends \
-    php-pear php7.1-cli php7.1-common php7.1-curl php7.1-dev php7.1-fpm \
-    php7.1-json php7.1-mbstring php7.1-mcrypt php7.1-mysql php7.1-opcache \
-    php7.1-zip php7.1-intl php7.1-gd php7.1-xml && rm -rf /var/lib/apt/lists/* \
+        php-pear php7.1-cli php7.1-common php7.1-curl php7.1-dev php7.1-fpm \
+        php7.1-json php7.1-mbstring php7.1-mcrypt php7.1-mysql php7.1-opcache \
+        php7.1-zip php7.1-intl php7.1-gd php7.1-xml \
+    && rm -rf /var/lib/apt/lists/* \
     && mkdir /run/php
 
 COPY --from=base /usr/local/nginx /usr/local/nginx
