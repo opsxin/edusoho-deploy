@@ -1,31 +1,26 @@
 #!/bin/bash
 
-set -u
+set -eu
 
-ensure_group_exist() {
-    egrep "^${running_group}" /etc/group >& /dev/null
-    if [ $? -ne 0 ]; then
+running_group="www-data"
+running_user="www-data"
+
+ensure_group_and_user_exist() {
+    if [ "$(egrep "^${running_group}:" /etc/group | wc -l)" -ne 1 ]; then
         echo "添加组: ${running_group}"
         groupadd ${running_group}
     fi
-}
 
-ensure_user_exist() {
-    egrep "^${running_user}" /etc/passwd >& /dev/null
-    if [ $? -ne 0 ]; then
+    if [ "$(egrep "^${running_user}:" /etc/passwd | wc -l)" -ne 1 ]; then
         echo "添加用户: ${running_user}"
         useradd -s /usr/sbin/nologin -g ${running_group} ${running_user}
     fi
 }
 
 centos_source() {
-    echo "CentOS: 修改国内 yum 源"
+    echo "CentOS7: 修改国内 yum 源"
     mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup
-    if [ "${os_version}" -eq 7 ]; then
-        curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.163.com/.help/CentOS7-Base-163.repo
-    else
-        curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-8.repo
-    fi
+    curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.163.com/.help/CentOS7-Base-163.repo
     yum makecache
 }
 
@@ -47,7 +42,8 @@ EOF
             curl wget gnupg2 ca-certificates \
             apt-transport-https software-properties-common
         apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv ABF5BD827BD9BF62
-        add-apt-repository "deb http://mirrors.ustc.edu.cn/nginx/ubuntu/ $(grep UBUNTU_CODENAME /etc/os-release | cut -d= -f2) nginx"
+        add-apt-repository "deb http://mirrors.ustc.edu.cn/nginx/ubuntu/ \
+            $(grep UBUNTU_CODENAME /etc/os-release | cut -d= -f2) nginx"
         apt update && apt install -y nginx 
     fi
     echo "修改 nginx 运行用户和组"
@@ -125,11 +121,7 @@ EOF
 install_php() {
     echo "开始安装 PHP 7.1"
     if [ "${os}" == "centos" ]; then
-        if [ "${os_version}" -eq 7 ]; then
-            yum install -y https://mirrors.tuna.tsinghua.edu.cn/remi/enterprise/remi-release-7.rpm
-        else
-            yum install -y https://mirrors.tuna.tsinghua.edu.cn/remi/enterprise/remi-release-8.rpm
-        fi
+        yum install -y https://mirrors.tuna.tsinghua.edu.cn/remi/enterprise/remi-release-7.rpm
         sed -e 's!^metalink=!#metalink=!g' \
             -e 's!^#baseurl=!baseurl=!g' \
             -e 's!//download\.fedoraproject\.org/pub!//mirrors.tuna.tsinghua.edu.cn!g' \
@@ -177,17 +169,14 @@ EOF
 install_mysql() {
     echo "开始安装 MySQL"
     if [ "${os}" == "centos" ]; then
-        if [ "${os_version}" -eq 7 ]; then
-            yum install -y https://mirrors.ustc.edu.cn/mysql-repo/mysql57-community-release-el7-9.noarch.rpm
-            yum makecache && yum install -y mysql-community-server mysql-community-client
-        else
-            yum install -y mysql mysql-server
-        fi
+        yum install -y https://mirrors.ustc.edu.cn/mysql-repo/mysql57-community-release-el7-9.noarch.rpm
+        yum makecache && yum install -y mysql-community-server mysql-community-client
         systemctl restart mysqld
     else
         if [ "${os_version}" -lt 2004 ]; then
             apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 8C718D3B5072E1F5
-            add-apt-repository "deb https://mirrors.tuna.tsinghua.edu.cn/mysql/apt/ubuntu/ $(grep UBUNTU_CODENAME /etc/os-release | cut -d= -f2) mysql-5.7"
+            add-apt-repository "deb https://mirrors.tuna.tsinghua.edu.cn/mysql/apt/ubuntu/ \
+                $(grep UBUNTU_CODENAME /etc/os-release | cut -d= -f2) mysql-5.7"
             apt update && apt install -y mysql-server mysql-client
         else
             apt install -y mysql-server-8.0 mysql-client-8.0
@@ -198,19 +187,14 @@ install_mysql() {
 
 install_edusoho() {
     echo "开始下载 web 文件"
-    if [ ! -d "/var/www" ]; then
-        mkdir "/var/www"
-    fi
-    if [ -d "/var/www/edusoho" ]; then
-        mv "/var/www/edusoho" "/var/www/edusoho_bak"
-    fi
-    yum install -y unzip || apt install -y unzip
+    if [ ! -d "/var/www" ]; then mkdir "/var/www"; fi
+    set +e; yum install -y unzip || apt install -y unzip; set -e
     curl http://download.edusoho.com/edusoho-8.7.15.zip -o /tmp/edusoho.zip
     unzip /tmp/edusoho.zip -d "/var/www/"
     chown -R ${running_user}:${running_group} "/var/www/edusoho"
 }
 
-if [ $(whoami) != "root" ]; then
+if [ $EUID -ne 0 ]; then
     echo "请使用 root 运行此脚本。"
     exit 1
 fi 
@@ -218,25 +202,19 @@ fi
 if grep -qs "ubuntu" /etc/os-release; then
 	os="ubuntu"
 	os_version="$(grep 'VERSION_ID' /etc/os-release | cut -d '"' -f 2 | tr -d '.')"
-	running_group="www-data"
-	running_user="www-data"
 elif [ -e /etc/centos-release ]; then
 	os="centos"
 	os_version="$(grep -oE '[0-9]+' /etc/centos-release | head -1)"
-	running_group="nobody"
-	running_user="nobody"
 else
-	echo "暂时只支持 Ubuntu 16.04,18.04,20.04 和 CentOS 7,8。"
+	echo "暂时只支持 Ubuntu 16.04、18.04、20.04 和 CentOS 7。"
 	exit 1
 fi
 
 ## 修改为国内源，加速下载
 #[ "${os}" == "centos" ] && centos_source
 
-ensure_group_exist
-ensure_user_exist
+ensure_group_and_user_exist
 install_nginx
 install_php
 install_mysql
 install_edusoho
-

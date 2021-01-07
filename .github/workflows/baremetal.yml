@@ -18,7 +18,6 @@ jobs:
       matrix:
         images:
           - geerlingguy/docker-centos7-ansible
-          - geerlingguy/docker-centos8-ansible
           - geerlingguy/docker-ubuntu1604-ansible
           - geerlingguy/docker-ubuntu1804-ansible
           - geerlingguy/docker-ubuntu2004-ansible
