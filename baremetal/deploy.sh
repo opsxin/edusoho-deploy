@@ -30,7 +30,8 @@ install_nginx() {
         cat > /etc/yum.repos.d/nginx.repo << 'EOF'
 [nginx-stable]
 name=nginx stable repo
-baseurl=http://mirrors.ustc.edu.cn/nginx/centos/$releasever/$basearch/
+#baseurl=http://mirrors.ustc.edu.cn/nginx/centos/$releasever/$basearch/
+baseurl=http://nginx.org/packages/centos/$releasever/$basearch/
 gpgcheck=1
 enabled=1
 gpgkey=http://mirrors.ustc.edu.cn/nginx/keys/nginx_signing.key
@@ -122,26 +123,21 @@ install_php() {
     echo "开始安装 PHP 7.1"
     if [ "${os}" == "centos" ]; then
         yum install -y https://mirrors.tuna.tsinghua.edu.cn/remi/enterprise/remi-release-7.rpm
-        sed -e 's!^metalink=!#metalink=!g' \
-            -e 's!^#baseurl=!baseurl=!g' \
-            -e 's!//download\.fedoraproject\.org/pub!//mirrors.tuna.tsinghua.edu.cn!g' \
-            -e 's!http://mirrors\.tuna!https://mirrors.tuna!g' \
-            -i /etc/yum.repos.d/epel*.repo
-        sed -e 's!^metalink=!#metalink=!g' \
-            -e 's!^mirrorlist=!#mirrorlist=!g' \
-            -e 's!^#baseurl=!baseurl=!g' \
-            -e '/^baseurl=/s!https\?://[^/]*/\(remi/\)\?\(.*\)!http://mirrors.huaweicloud.com/remi/\2!g;' \
-            -i /etc/yum.repos.d/remi*.repo
+#        sed -e 's!^metalink=!#metalink=!g' \
+#            -e 's!^#baseurl=!baseurl=!g' \
+#            -e 's!//download\.fedoraproject\.org/pub!//mirrors.tuna.tsinghua.edu.cn!g' \
+#            -e 's!http://mirrors\.tuna!https://mirrors.tuna!g' \
+#            -i /etc/yum.repos.d/epel*.repo
+#        sed -e 's!^metalink=!#metalink=!g' \
+#            -e 's!^mirrorlist=!#mirrorlist=!g' \
+#            -e 's!^#baseurl=!baseurl=!g' \
+#            -e '/^baseurl=/s!https\?://[^/]*/\(remi/\)\?\(.*\)!http://mirrors.huaweicloud.com/remi/\2!g;' \
+#            -i /etc/yum.repos.d/remi*.repo
         yum makecache && yum install -y \
             php71-php-pear php71-php-cli php71-php-common \
             php71-php-curl php71-php-fpm php71-php-json \
             php71-php-mbstring php71-php-mcrypt php71-php-mysql php71-php-opcache \
             php71-php-zip php71-php-intl php71-php-gd php71-php-xml
-        cat >> /etc/opt/remi/php71/php.ini  << EOF
-post_max_size = 1024M
-memory_limit = 1024M
-upload_max_filesize = 1024M
-EOF
         sed -e "s/apache/${running_user}/g" \
             -e "s/^listen = .*/listen = 127.0.0.1:9000/" \
             -i /etc/opt/remi/php71/php-fpm.d/www.conf
@@ -154,14 +150,7 @@ EOF
             php-pear php7.1-cli php7.1-common php7.1-curl php7.1-dev php7.1-fpm \
             php7.1-json php7.1-mbstring php7.1-mcrypt php7.1-mysql php7.1-opcache \
             php7.1-zip php7.1-intl php7.1-gd php7.1-xml
-        cat >> /etc/php/7.1/fpm/php.ini  << EOF
-post_max_size = 1024M
-memory_limit = 1024M
-upload_max_filesize = 1024M
-EOF
-        cat >> /etc/php/7.1/fpm/pool.d/www.conf << EOF
-listen = 127.0.0.1:9000
-EOF
+        echo "listen = 127.0.0.1:9000" >> /etc/php/7.1/fpm/pool.d/www.conf
         systemctl restart php7.1-fpm
     fi
 }
@@ -169,13 +158,16 @@ EOF
 install_mysql() {
     echo "开始安装 MySQL"
     if [ "${os}" == "centos" ]; then
-        yum install -y https://mirrors.ustc.edu.cn/mysql-repo/mysql57-community-release-el7-9.noarch.rpm
+#        yum install -y https://mirrors.ustc.edu.cn/mysql-repo/mysql57-community-release-el7-9.noarch.rpm
+        yum install -y http://dev.mysql.com/get/mysql57-community-release-el7-9.noarch.rpm
         yum makecache && yum install -y mysql-community-server mysql-community-client
         systemctl restart mysqld
     else
         if [ "${os_version}" -lt 2004 ]; then
             apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 8C718D3B5072E1F5
-            add-apt-repository "deb https://mirrors.tuna.tsinghua.edu.cn/mysql/apt/ubuntu/ \
+#            add-apt-repository "deb https://mirrors.tuna.tsinghua.edu.cn/mysql/apt/ubuntu/ \
+#                $(grep UBUNTU_CODENAME /etc/os-release | cut -d= -f2) mysql-5.7"
+            add-apt-repository "deb https://repo.mysql.com/apt/ubuntu/ \
                 $(grep UBUNTU_CODENAME /etc/os-release | cut -d= -f2) mysql-5.7"
             apt update && apt install -y mysql-server mysql-client
         else
