@@ -1,4 +1,4 @@
-version: "3"
+version: "3.4"
 
 services:
   db:
@@ -13,6 +13,12 @@ services:
       MYSQL_DATABASE: $DB_NAME
       MYSQL_USER: $DB_USER
       MYSQL_PASSWORD: $DB_PASSWORD
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     volumes:
       - db:/var/lib/mysql
     networks:
@@ -21,8 +27,15 @@ services:
   web:
     image: registry.cn-shanghai.aliyuncs.com/hsin/edusoho:8.7.15
     container_name: edusoho-web
+    depends_on:
+      - db
     environment:
       TZ: Asia/Shanghai
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
     volumes:
       - private_files:/var/www/edusoho/app/data/private_files
       - udisk:/var/www/edusoho/app/data/udisk
@@ -41,3 +54,4 @@ volumes:
 
 networks:
   edusoho:
+
