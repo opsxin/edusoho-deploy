@@ -1,13 +1,15 @@
-FROM debian:10 AS base
+FROM debian:10.9 AS base
 
-RUN apt update \
+RUN sed -e 's#deb.debian.org#mirrors.163.com#g' \
+    -e '/security/d' -i /etc/apt/sources.list \
+    && apt update \
     && apt install -y git wget build-essential \
     libpcre3 libpcre3-dev zlib1g-dev openssl libssl-dev
 
 RUN cd /root && git clone git://github.com/vozlt/nginx-module-vts.git \
-    && wget https://nginx.org/download/nginx-1.19.2.tar.gz -O /root/nginx.tgz \
+    && wget https://nginx.org/download/nginx-1.19.9.tar.gz -O /root/nginx.tgz \
     && tar zxvf /root/nginx.tgz \
-    && cd /root/nginx-1.19.2 \
+    && cd /root/nginx-1.19.9 \
     && ./configure --prefix=/usr/local/nginx --user=www-data --group=www-data \
     --with-compat --with-file-aio --with-threads --with-http_addition_module \
     --with-http_auth_request_module --with-http_dav_module --with-http_flv_module \
@@ -20,10 +22,11 @@ RUN cd /root && git clone git://github.com/vozlt/nginx-module-vts.git \
     && make && make install
 
 
-FROM debian:10
+FROM debian:10.9
 
 LABEL maintainer="hsin@opsxin.com"
-LABEL nginx-version="1.19.2"
+LABEL edusoho-version="21.1.6"
+LABEL nginx-version="1.19.9"
 LABEL PHP-version="7.1"
 LABEL nginx-export="http://IP:8080/nginx_status"
 
@@ -31,7 +34,9 @@ ENV TZ Asia/Shanghai
 
 WORKDIR /usr/local/nginx
 
-RUN apt update \
+RUN sed -e 's#deb.debian.org#mirrors.163.com#g' \
+    -e '/security/d' -i /etc/apt/sources.list \
+    && apt update \
     && apt install -y --no-install-recommends \
         libpcre3 libpcre3-dev zlib1g-dev openssl libssl-dev \
         curl gnupg2 ca-certificates apt-transport-https \
@@ -42,7 +47,7 @@ RUN curl https://packages.sury.org/php/apt.gpg -o- | apt-key add - \
     && apt update && apt install -y --no-install-recommends \
         php-pear php7.1-cli php7.1-common php7.1-curl php7.1-dev php7.1-fpm \
         php7.1-json php7.1-mbstring php7.1-mcrypt php7.1-mysql php7.1-opcache \
-        php7.1-zip php7.1-intl php7.1-gd php7.1-xml \
+        php7.1-zip php7.1-intl php7.1-gd php7.1-xml php7.1-redis \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir /run/php
 
