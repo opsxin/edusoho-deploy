@@ -1,24 +1,25 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: private-files
+  name: db-pvc
   namespace: edusoho
 spec:
   accessModes:
     - ReadWriteMany
+  storageClassName: "gluster-heketi"
   resources:
     requests:
       storage: 2Gi
-
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: udisk
+  name: web-pvc
   namespace: edusoho
 spec:
   accessModes:
     - ReadWriteMany
+  storageClassName: "gluster-heketi"
   resources:
     requests:
-      storage: 1Gi
+      storage: 2Gi

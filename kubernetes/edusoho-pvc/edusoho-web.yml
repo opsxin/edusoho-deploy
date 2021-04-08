@@ -14,23 +14,24 @@ spec:
     spec:
       containers:
         - name: edusoho-web
-          image: registry.cn-shanghai.aliyuncs.com/hsin/edusoho:8.7.15
+          image: registry.cn-shanghai.aliyuncs.com/hsin/edusoho-init:21.1.6
           resources:
             limits:
-              memory: "128Mi"
-              cpu: "200m"
+              memory: "512Mi"
+              cpu: "500m"
           ports:
             - containerPort: 80
               name: nginx-port
           volumeMounts:
-            - mountPath: /var/www/edusoho/app/data/private_files
-              name: private-files
-            - mountPath: /var/www/edusoho/app/data/udisk
-              name: udisk
+            - mountPath: /var/www/edusoho/
+              name: web-pvc
           lifecycle:
+            postStart:
+              exec:
+                command: ["sh", "-c", 'if [ -d "/var/www/edusoho/init" ]; then while [ ! -f "/var/www/edusoho/init/OK" ]; do echo "wait init..."; sleep 1; done; else mkdir "/var/www/edusoho/init"; mv /var/www/edusoho-init/* "/var/www/edusoho/" && touch /var/www/edusoho/init/OK || exit 2; fi']
             preStop:
               exec:
-                command: ["sh", "-c", "nginx -s stop"]
+                command: ["sh", "-c", "/usr/local/nginx/sbin/nginx -s stop"]
           readinessProbe:
             initialDelaySeconds: 10
             httpGet:
@@ -44,9 +45,6 @@ spec:
           #     path: "/"
           #     port: nginx-port
       volumes:
-        - name: private-files
+        - name: web-pvc
           persistentVolumeClaim:
-            claimName: private-files
-        - name: udisk
-          persistentVolumeClaim:
-            claimName: udisk
+            claimName: web-pvc
