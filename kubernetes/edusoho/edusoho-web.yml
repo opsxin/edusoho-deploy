@@ -4,7 +4,6 @@ metadata:
   name: edusoho-web
   namespace: edusoho
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: edusoho-web
@@ -15,21 +14,11 @@ spec:
     spec:
       containers:
         - name: edusoho-web
-          image: registry.cn-shanghai.aliyuncs.com/hsin/edusoho:8.7.15
+          image: registry.cn-shanghai.aliyuncs.com/hsin/edusoho:21.1.6
           resources:
             limits:
-              memory: "128Mi"
+              memory: "512Mi"
               cpu: "500m"
           ports:
             - containerPort: 80
               name: nginx-port
-          volumeMounts:
-            - mountPath: /var/www/edusoho/app/data/private_files
-              name: private-files
-            - mountPath: /var/www/edusoho/app/data/udisk
-              name: udisk
-      volumes:
-        - name: private-files
-          emptyDir: {}
-        - name: udisk
-          emptyDir: {}

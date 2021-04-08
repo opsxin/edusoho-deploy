@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: edusoho-db
-          image: mysql:5.7
+          image: mysql/mysql-server:8.0.23-1.1.19
           env:
             - name: MYSQL_ROOT_PASSWORD
               value: edusoho
@@ -26,7 +26,7 @@ spec:
               value: edusoho
           resources:
             limits:
-              memory: "256Mi"
+              memory: "512Mi"
               cpu: "500m"
           ports:
             - containerPort: 3306

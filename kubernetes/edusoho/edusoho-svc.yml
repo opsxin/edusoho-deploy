@@ -22,4 +22,3 @@ spec:
   ports:
     - port: 80
       targetPort: nginx-port
-  type: NodePort
