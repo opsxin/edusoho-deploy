@@ -1,4 +1,6 @@
-FROM debian:10.9 AS base
+FROM debian:stable-20210329 AS base
+
+ENV nginx_version="1.19.9"
 
 RUN sed -e 's#deb.debian.org#mirrors.163.com#g' \
     -e '/security/d' -i /etc/apt/sources.list \
@@ -7,9 +9,9 @@ RUN sed -e 's#deb.debian.org#mirrors.163.com#g' \
     libpcre3 libpcre3-dev zlib1g-dev openssl libssl-dev
 
 RUN cd /root && git clone git://github.com/vozlt/nginx-module-vts.git \
-    && wget https://nginx.org/download/nginx-1.19.9.tar.gz -O /root/nginx.tgz \
+    && wget https://nginx.org/download/nginx-${nginx_version}.tar.gz -O /root/nginx.tgz \
     && tar zxvf /root/nginx.tgz \
-    && cd /root/nginx-1.19.9 \
+    && cd /root/nginx-${nginx_version} \
     && ./configure --prefix=/usr/local/nginx --user=www-data --group=www-data \
     --with-compat --with-file-aio --with-threads --with-http_addition_module \
     --with-http_auth_request_module --with-http_dav_module --with-http_flv_module \
@@ -22,12 +24,12 @@ RUN cd /root && git clone git://github.com/vozlt/nginx-module-vts.git \
     && make && make install
 
 
-FROM debian:10.9
+FROM debian:stable-20210329
 
 LABEL maintainer="hsin@opsxin.com"
 LABEL edusoho-version="21.1.6"
 LABEL nginx-version="1.19.9"
-LABEL PHP-version="7.1"
+LABEL php-version="7.1"
 LABEL nginx-export="http://IP:8080/nginx_status"
 
 ENV TZ Asia/Shanghai
@@ -60,4 +62,3 @@ ADD --chown=www-data:www-data edusoho /var/www/edusoho/
 EXPOSE 80 8080
 
 CMD ["bash", "-c", "php-fpm7.1 && /usr/local/nginx/sbin/nginx"]
-
