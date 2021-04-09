@@ -53,6 +53,13 @@ RUN curl https://packages.sury.org/php/apt.gpg -o- | apt-key add - \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir /run/php
 
+RUN sed -e "s/pm.max_children = 5/pm.max_children = 15/" \
+    -e "s/pm.start_servers = 2/pm.start_servers = 4/" \
+    -e "s/pm.min_spare_servers = 1/pm.min_spare_servers = 3/" \
+    -e "s/pm.max_spare_servers = 3/pm.max_spare_servers = 5/" \
+    -e "s/;pm.max_requests = 500/pm.max_requests = 5000/" \
+    -i /etc/php/7.1/fpm/pool.d/www.conf
+
 COPY --from=base /usr/local/nginx /usr/local/nginx
 
 COPY nginx.conf /usr/local/nginx/conf/nginx.conf
